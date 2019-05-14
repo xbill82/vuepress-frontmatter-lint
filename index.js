@@ -1,20 +1,24 @@
 const { writeFileSync } = require('fs');
 const { pickBy } = require('lodash');
+const c = require('chalk');
 
-const errors = {};
+let errors = {};
 const pluginName = 'validate-frontmatter';
 
-module.exports = options => {
+module.exports = (options, ctx) => {
   const { specs } = options;
 
   if (!specs) {
-    console.log(`plugin-${pluginName}: No frontmatter specs found.`);
+    console.log(
+      c.cyan(`plugin-${pluginName}`) + ` No frontmatter specs found.`
+    );
     return { name: pluginName };
   }
 
   if (typeof specs !== 'object') {
     console.log(
-      `plugin-${pluginName}: Invalid frontmatter specs type: expected object, got ${typeof specs}`
+      c.cyan(`plugin-${pluginName}`) +
+        ` Invalid frontmatter specs type: expected object, got ${typeof specs}`
     );
     return { name: pluginName };
   }
@@ -47,7 +51,7 @@ module.exports = options => {
         if (!hasOwn(specs, key)) {
           addError(errors, _filePath, {
             error: 'INVALID_KEY',
-            got: key
+            key
           });
           return;
         }
@@ -75,26 +79,66 @@ module.exports = options => {
             addError(errors, _filePath, {
               error: 'INVALID_VALUE',
               key,
-              expected: spec.allowedValues,
+              expected: JSON.stringify(spec.allowedValues),
               got: value
             });
           }
         }
       });
     },
+    updated() {
+      if (Object.keys(errors).length) {
+        generateConsoleReport(errors);
+      }
+    },
     ready() {
       if (Object.keys(errors).length) {
-        writeFileSync(
-          './frontmatter-errors.json',
-          JSON.stringify(errors, null, 4)
-        );
-        throw new Error(
-          'Some pages do not have a valid frontmatter. Please refer to frontmatter-errors.json'
-        );
+        const dumpFile = './frontmatter-errors.json';
+        generateConsoleReport(errors);
+        if (options.dumpToFile) {
+          dumpErrorsToFile(errors, options.dumpFile || dumpFile);
+        }
+        errors = {};
+        if (options.abortBuild) {
+          throw new Error('Aborting build.');
+        }
       }
     }
   };
 };
+
+function dumpErrorsToFile(errors, fileName) {
+  writeFileSync(fileName, JSON.stringify(errors, null, 4));
+  console.error(c.red(`Frontmatter errors have been dumped to ${fileName}`));
+}
+
+function generateConsoleReport(errors) {
+  console.error(
+    '\n' +
+      c.cyan(`plugin-${pluginName}`) +
+      c.redBright(` Some pages do not have a valid frontmatter.\n`)
+  );
+  Object.keys(errors).forEach(path => {
+    const errorsOnFile = errors[path];
+    console.log(c.whiteBright(`- ${path}`));
+
+    errorsOnFile.forEach(e => {
+      if (e.error === 'EMPTY_KEY') {
+        console.log(c.yellow(`  ${e.error}`));
+      } else {
+        console.log(c.yellow(`  ${e.error}`) + ` on field ` + c.cyan(e.key));
+        if (e.expected) {
+          console.log(c.gray(`    Expected: `) + e.expected);
+        }
+        if (e.got) {
+          console.log(c.gray(`    Got: `) + c.red(e.got));
+        }
+      }
+    });
+    console.log('');
+  });
+  console.log('');
+}
 
 function addError(errors, path, error) {
   if (!errors[path]) {
