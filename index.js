@@ -2,11 +2,11 @@ const { writeFileSync } = require('fs');
 const { pickBy } = require('lodash');
 const c = require('chalk');
 
-let errors = {};
 const pluginName = 'validate-frontmatter';
 const dumpFile = './frontmatter-errors.json';
 
 module.exports = (options, ctx) => {
+  let errorsByPath = {};
   const { specs } = options;
 
   if (!specs) {
@@ -28,29 +28,30 @@ module.exports = (options, ctx) => {
     name: pluginName,
     extendPageData($page) {
       const {
-        _filePath, // file's absolute path
+        regularPath, // file's absolute path
         frontmatter // page's frontmatter object
       } = $page;
 
       const requiredFields = pickBy(specs, s => s.required === true);
       Object.keys(requiredFields).forEach(fieldName => {
         if (Object.keys(frontmatter).indexOf(fieldName) === -1) {
-          addError(errors, _filePath, {
+          const error = {
             error: 'MISSING_KEY',
             key: fieldName
-          });
+          };
+          addError(errorsByPath, regularPath, error);
         }
       });
 
       Object.keys(frontmatter).forEach(key => {
         if (!key) {
-          addError(errors, _filePath, {
+          addError(errorsByPath, regularPath, {
             error: 'EMPTY_KEY'
           });
           return;
         }
         if (!hasOwn(specs, key)) {
-          addError(errors, _filePath, {
+          addError(errorsByPath, regularPath, {
             error: 'INVALID_KEY',
             key
           });
@@ -58,7 +59,7 @@ module.exports = (options, ctx) => {
         }
         const value = frontmatter[key];
         if (value === null || typeof value === 'undefined') {
-          addError(errors, _filePath, {
+          addError(errorsByPath, regularPath, {
             error: 'EMPTY_VALUE',
             key
           });
@@ -67,7 +68,7 @@ module.exports = (options, ctx) => {
         const spec = specs[key];
         const assertResult = assertType(value, spec.type);
         if (!assertResult.valid) {
-          addError(errors, _filePath, {
+          addError(errorsByPath, regularPath, {
             error: 'INVALID_TYPE',
             key,
             expected: getType(spec.type),
@@ -77,7 +78,7 @@ module.exports = (options, ctx) => {
         }
         if (hasOwn(spec, 'allowedValues')) {
           if (!assertAllowedValue(value, spec.allowedValues)) {
-            addError(errors, _filePath, {
+            addError(errorsByPath, regularPath, {
               error: 'INVALID_VALUE',
               key,
               expected: JSON.stringify(spec.allowedValues),
@@ -88,19 +89,24 @@ module.exports = (options, ctx) => {
       });
     },
     updated() {
-      if (Object.keys(errors).length) {
-        generateConsoleReport(errors);
+      if (Object.keys(errorsByPath).length) {
+        generateConsoleReport(errorsByPath);
       }
     },
     ready() {
-      if (Object.keys(errors).length) {
-        generateConsoleReport(errors);
+      if (options.onReady) {
+        errorsByPath = options.onReady(errorsByPath, ctx);
+      }
+
+      if (Object.keys(errorsByPath).length) {
+        generateConsoleReport(errorsByPath);
         if (options.dumpToFile) {
-          dumpErrorsToFile(errors, options.dumpFile || dumpFile);
+          dumpErrorsToFile(errorsByPath, options.dumpFile || dumpFile);
         }
-        errors = {};
+        errorsByPath = {};
         if (options.abortBuild) {
-          throw new Error('Aborting build.');
+          console.error(c.red('\nAborting build.\n'));
+          process.exit(1);
         }
       }
     }
