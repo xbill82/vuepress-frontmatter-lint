@@ -1,6 +1,6 @@
 {
   "name": "vuepress-validate-frontmatter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Validate page frontmatters in the VueJS props validation fashion",
   "main": "index.js",
   "scripts": {

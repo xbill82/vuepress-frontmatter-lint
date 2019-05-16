@@ -4,6 +4,7 @@ const c = require('chalk');
 
 let errors = {};
 const pluginName = 'validate-frontmatter';
+const dumpFile = './frontmatter-errors.json';
 
 module.exports = (options, ctx) => {
   const { specs } = options;
@@ -35,8 +36,8 @@ module.exports = (options, ctx) => {
       Object.keys(requiredFields).forEach(fieldName => {
         if (Object.keys(frontmatter).indexOf(fieldName) === -1) {
           addError(errors, _filePath, {
-            error: 'MISSING_PROP',
-            expected: fieldName
+            error: 'MISSING_KEY',
+            key: fieldName
           });
         }
       });
@@ -93,7 +94,6 @@ module.exports = (options, ctx) => {
     },
     ready() {
       if (Object.keys(errors).length) {
-        const dumpFile = './frontmatter-errors.json';
         generateConsoleReport(errors);
         if (options.dumpToFile) {
           dumpErrorsToFile(errors, options.dumpFile || dumpFile);
