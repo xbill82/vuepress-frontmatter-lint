@@ -5,6 +5,7 @@ const path = require('path');
 const { trimEnd, assign, truncate } = require('lodash');
 const fs = require('fs');
 const YAML = require('yaml');
+const emoji = require('node-emoji');
 
 const { diffLines } = require('diff');
 const c = require('chalk');
@@ -20,7 +21,11 @@ program
   .option('-y --yes', 'Answer yes to all prompts')
   .parse(process.argv);
 
-console.log(c.bold.whiteBright('\n Frontmatter lint auto-fix tool\n'));
+console.log('');
+console.log(
+  emoji.get(' :sparkles:'),
+  c.bold.whiteBright('Frontmatter lint auto-fix tool\n')
+);
 
 let dirOption = program.dir;
 if (!dirOption) {
@@ -65,7 +70,7 @@ if (!program.yes) {
   );
 }
 
-const proceed = new Confirm('Shall we start?');
+const proceed = new Confirm(`${emoji.get(':rocket:')} Shall we start?`);
 proceed.run().then(answer => {
   if (!answer) {
     console.log('\n  Ok, see you!\n');
@@ -77,6 +82,7 @@ proceed.run().then(answer => {
 });
 
 async function fixErrors(errorsByPath) {
+  console.log('');
   for (const url of Object.keys(errorsByPath)) {
     const errors = errorsByPath[url];
     const filePath = path.resolve(
@@ -86,7 +92,9 @@ async function fixErrors(errorsByPath) {
       'index.md'
     );
     const fileBlob = fs.readFileSync(filePath);
-    console.log(`>> ${c.whiteBright(url)}...\n`);
+    console.log(
+      `> ${emoji.get(' :page_facing_up:')} ${c.whiteBright(url)}...\n`
+    );
     const fileContents = fileBlob.toString();
     const matches = fileContents.match(frontmatterRE);
     let frontmatterText;
@@ -118,17 +126,25 @@ async function fixErrors(errorsByPath) {
 
     if (answer) {
       fs.writeFileSync(filePath, fileContentsFixed);
-      console.log(c.blue('>> Fixed!\n'));
+      console.log(c.blue(`\n ${emoji.get(' :sparkles:')} Fixed!\n`));
     } else {
-      console.log(c.grey('>> Skipped!\n'));
+      console.log(`\n ${emoji.get(':see_no_evil:')} Skipped!\n`);
     }
   }
+  console.log(
+    `\n${emoji.get(':raised_hands:')} ${c.bold.whiteBright(' All done!')}\n`
+  );
 }
 
 function fixError(error, frontmatter) {
   switch (error.error) {
     case 'MISSING_KEY':
       return assign(error.fix, frontmatter);
+      break;
+
+    case 'INVALID_KEY':
+      delete frontmatter[error.key];
+      return frontmatter;
       break;
 
     default:

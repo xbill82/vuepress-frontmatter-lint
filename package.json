@@ -27,6 +27,7 @@
     "commander": "^2.20.0",
     "diff": "^4.0.1",
     "lodash": "^4.17.11",
+    "node-emoji": "^1.10.0",
     "prompt-confirm": "^2.0.4",
     "yaml": "^1.5.1"
   }

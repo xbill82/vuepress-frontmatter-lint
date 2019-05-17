@@ -131,7 +131,15 @@ module.exports = (options, ctx) => {
 
 function dumpErrorsToFile(errors, fileName) {
   writeFileSync(fileName, JSON.stringify(errors, null, 4));
-  console.error(c.red(`Frontmatter errors have been dumped to ${fileName}`));
+  console.log(`Frontmatter errors have been dumped to ${c.yellow(fileName)}\n`);
+  console.log(
+    c.cyan(
+      `You might consider running the auto-fixer with the following command\n`
+    )
+  );
+  console.log(
+    c.bold.whiteBright(`  $(npm bin)/frontmatter-fix -e ${fileName}`)
+  );
 }
 
 function generateConsoleReport(errors) {
