@@ -11,7 +11,7 @@ const { diffLines } = require('diff');
 const c = require('chalk');
 const Confirm = require('prompt-confirm');
 
-const frontmatterRE = /^---$\n(^[a-zA-Z0-9_\-]*:.*$\n)*\n?^---$/m;
+const frontmatterRE = /^---$\n(^[a-zA-Z0-9_\-]*:? .*$\n)*\n?^---$/m;
 
 program
   .version('1.0.0')
@@ -118,6 +118,8 @@ async function fixErrors(errorsByPath) {
     const fileBlob = fs.readFileSync(filePath);
     console.log(` ${emoji.get(':page_facing_up:')} ${c.whiteBright(url)}...\n`);
     const fileContents = fileBlob.toString();
+
+    // Find frontamtter
     const matches = fileContents.match(frontmatterRE);
     let frontmatterText;
     if (matches && matches.length) {
@@ -129,7 +131,11 @@ async function fixErrors(errorsByPath) {
       );
       process.exit(1);
     }
+
+    // Strip `---` from frontmatter
     frontmatterText = frontmatterText.replace(/^---$\n?/gm, '');
+
+    // Parse frontmatter
     let frontmatter = YAML.parse(frontmatterText);
 
     errors
