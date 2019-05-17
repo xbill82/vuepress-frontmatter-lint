@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const program = require('commander');
 const path = require('path');
 const { trimEnd, assign, truncate } = require('lodash');
@@ -13,12 +15,17 @@ const frontmatterRE = /^---$\n(^[a-zA-Z0-9_\-]*:.*$\n)*\n?^---$/m;
 program
   .version('1.0.0')
   .description('Applies the fixes from file to the repo')
-  .usage('-e <error file>')
+  .option('-d --dir <directory>', 'The root directory of the files to fix')
   .option('-e --errors <file>', 'A file containing the dumped errors')
   .option('-y --yes', 'Answer yes to all prompts')
   .parse(process.argv);
 
 console.log(c.bold.whiteBright('\n Frontmatter lint auto-fix tool\n'));
+
+let dirOption = program.dir;
+if (!dirOption) {
+  dirOption = '.';
+}
 
 const errorOption = program.errors;
 if (!errorOption) {
@@ -74,6 +81,7 @@ async function fixErrors(errorsByPath) {
     const errors = errorsByPath[url];
     const filePath = path.resolve(
       process.cwd(),
+      dirOption,
       url.replace(/^\//, ''),
       'index.md'
     );
