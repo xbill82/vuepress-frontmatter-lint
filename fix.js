@@ -73,6 +73,11 @@ const errorCount = Object.keys(errorsByUrl).reduce(
   { total: 0, fixable: 0 }
 );
 
+if (errorCount.total === 0) {
+  console.log(` ${emoji.get(':cocktail:')} No errors found. Life is easy!`);
+  process.exit(0);
+}
+
 console.log(
   ` Found ${c.green(errorCount.fixable)} fixable errors (of ${
     errorCount.total
