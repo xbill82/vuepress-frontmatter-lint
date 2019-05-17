@@ -143,7 +143,7 @@ function dumpErrorsToFile(errors, fileName, sourceDir) {
   );
   console.log(
     c.bold.whiteBright(
-      `  $(npm bin)/frontmatter-fix -e ${fileName} -s ${sourceDir}`
+      `  $(npm bin)/frontmatter-fix -e ${fileName} -d ${sourceDir}`
     )
   );
 }

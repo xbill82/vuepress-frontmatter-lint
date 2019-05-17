@@ -87,7 +87,7 @@ if (!program.yes) {
   const proceed = new Confirm(`${emoji.get(':rocket:')} Shall we start?`);
   proceed.run().then(answer => {
     if (!answer) {
-      console.log('\n  Ok, see you!\n');
+      console.log(`\n ${emoji.get(':wave:')} Ok, see you!\n`);
       return 0;
     }
     fixErrors(errorsByUrl).then(() => {
