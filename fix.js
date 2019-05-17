@@ -120,8 +120,14 @@ async function fixErrors(errorsByPath) {
     const fileContents = fileBlob.toString();
     const matches = fileContents.match(frontmatterRE);
     let frontmatterText;
-    if (matches.length) {
+    if (matches && matches.length) {
       frontmatterText = matches[0];
+    } else {
+      console.error(
+        `${emoji.get(':scream:')} ` +
+          c.red(`OMG, I'm unable to parse the frontmatter for this page!`)
+      );
+      process.exit(1);
     }
     frontmatterText = frontmatterText.replace(/^---$\n?/gm, '');
     let frontmatter = YAML.parse(frontmatterText);
@@ -137,11 +143,13 @@ async function fixErrors(errorsByPath) {
       frontmatterRE,
       `---\n${fixedFrontmatterText}---`
     );
-    const diff = diffLines(fileContents, fileContentsFixed);
-    outputDiff(diff);
+
     let answer = program.yes;
 
     if (!answer) {
+      const diff = diffLines(fileContents, fileContentsFixed);
+      outputDiff(diff);
+
       const prompt = new Confirm('Proceed with fix?');
       answer = await prompt.run();
     }
