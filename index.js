@@ -94,8 +94,8 @@ module.exports = (options, ctx) => {
       }
     },
     ready() {
-      if (options.onReady) {
-        errorsByPath = options.onReady(errorsByPath, ctx);
+      if (options.postProcessErrors) {
+        errorsByPath = options.postProcessErrors(errorsByPath, ctx);
       }
 
       if (Object.keys(errorsByPath).length) {

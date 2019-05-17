@@ -17,7 +17,10 @@ program
   .version('1.0.0')
   .description('Applies the fixes from file to the repo')
   .option('-d --dir <directory>', 'The root directory of the files to fix')
-  .option('-s --subdir <dir>', 'The subdirectory to restrict the fixes into')
+  .option(
+    '-s --subdir <directory>',
+    'The subdirectory to restrict the fixes into'
+  )
   .option('-e --errors <file>', 'A file containing the dumped errors')
   .option('-y --yes', 'Answer yes to all prompts')
   .parse(process.argv);
@@ -74,18 +77,21 @@ if (!program.yes) {
       ' I will show you the diff and ask you confirmation before applying each fix.\n'
     )
   );
-}
-
-const proceed = new Confirm(`${emoji.get(':rocket:')} Shall we start?`);
-proceed.run().then(answer => {
-  if (!answer) {
-    console.log('\n  Ok, see you!\n');
-    return 0;
-  }
+  const proceed = new Confirm(`${emoji.get(':rocket:')} Shall we start?`);
+  proceed.run().then(answer => {
+    if (!answer) {
+      console.log('\n  Ok, see you!\n');
+      return 0;
+    }
+    fixErrors(errorsByUrl).then(() => {
+      process.exit();
+    });
+  });
+} else {
   fixErrors(errorsByUrl).then(() => {
     process.exit();
   });
-});
+}
 
 async function fixErrors(errorsByPath) {
   console.log('');
