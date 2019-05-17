@@ -110,6 +110,22 @@ module.exports = (options, ctx) => {
         }
       }
     }
+    // extendCli(cli) {
+    //   cli
+    //     .command('toto [targetDir]', 'Applies the fixes from file to the repo')
+    //     .option('-e --errors <file>', 'A file containing the dumped errors')
+    //     .option('-y --yes', 'Answer yes to all prompts')
+    //     .action((dir = '.', options) => {
+    //       console.log(
+    //         `executing on dir ${dir} with options ${JSON.stringify(
+    //           options,
+    //           null,
+    //           2
+    //         )}`
+    //       );
+    //       process.exit(0);
+    //     });
+    // }
   };
 };
 
