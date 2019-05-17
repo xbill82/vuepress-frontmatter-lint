@@ -55,12 +55,19 @@ if (program.subdir) {
   });
 }
 
+function isFixable(e) {
+  if (e.error === 'INVALID_KEY') {
+    return true;
+  }
+  return e.fix;
+}
+
 const errorCount = Object.keys(errorsByUrl).reduce(
   (count, url) => {
     const errors = errorsByUrl[url];
     return {
       total: count.total + errors.length,
-      fixable: count.fixable + errors.filter(e => e.fix).length
+      fixable: count.fixable + errors.filter(isFixable).length
     };
   },
   { total: 0, fixable: 0 }
