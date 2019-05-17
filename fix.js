@@ -11,7 +11,7 @@ const { diffLines } = require('diff');
 const c = require('chalk');
 const Confirm = require('prompt-confirm');
 
-const frontmatterRE = /^---$\n(^[a-zA-Z0-9_\-]*:? .*$\n)*\n?^---$/m;
+const frontmatterRE = /^---$\n(^[a-zA-Z0-9_\-]*: .*$\n+)*^---$/m;
 
 program
   .version('1.0.0')
