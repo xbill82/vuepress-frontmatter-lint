@@ -138,11 +138,9 @@ async function fixErrors(errorsByPath) {
     // Parse frontmatter
     let frontmatter = YAML.parse(frontmatterText);
 
-    errors
-      .filter(e => e.fix)
-      .forEach(e => {
-        frontmatter = fixError(e, frontmatter);
-      });
+    errors.filter(isFixable).forEach(e => {
+      frontmatter = fixError(e, frontmatter);
+    });
 
     const fixedFrontmatterText = YAML.stringify(frontmatter);
     const fileContentsFixed = fileContents.replace(
