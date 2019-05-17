@@ -2,7 +2,7 @@
 
 const program = require('commander');
 const path = require('path');
-const { trimEnd, assign, truncate } = require('lodash');
+const { trimEnd, assign, truncate, pickBy, startsWith } = require('lodash');
 const fs = require('fs');
 const YAML = require('yaml');
 const emoji = require('node-emoji');
@@ -17,6 +17,7 @@ program
   .version('1.0.0')
   .description('Applies the fixes from file to the repo')
   .option('-d --dir <directory>', 'The root directory of the files to fix')
+  .option('-s --subdir <dir>', 'The subdirectory to restrict the fixes into')
   .option('-e --errors <file>', 'A file containing the dumped errors')
   .option('-y --yes', 'Answer yes to all prompts')
   .parse(process.argv);
@@ -29,7 +30,7 @@ console.log(
 
 let dirOption = program.dir;
 if (!dirOption) {
-  dirOption = '.';
+  dirOption = '/';
 }
 
 const errorOption = program.errors;
@@ -44,6 +45,11 @@ try {
   errorsByUrl = require(errorFilePath);
 } catch (error) {
   console.error(` Unable to open ${errorFilePath}: ${error}`);
+}
+if (program.subdir) {
+  errorsByUrl = pickBy(errorsByUrl, (value, key) => {
+    return startsWith(key, program.subdir);
+  });
 }
 
 const errorCount = Object.keys(errorsByUrl).reduce(
@@ -93,7 +99,7 @@ async function fixErrors(errorsByPath) {
     );
     const fileBlob = fs.readFileSync(filePath);
     console.log(
-      `> ${emoji.get(' :page_facing_up:')} ${c.whiteBright(url)}...\n`
+      `> ${emoji.get(':page_facing_up:')} ${c.whiteBright(url)}...\n`
     );
     const fileContents = fileBlob.toString();
     const matches = fileContents.match(frontmatterRE);
