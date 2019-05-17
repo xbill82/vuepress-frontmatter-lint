@@ -74,7 +74,7 @@ const errorCount = Object.keys(errorsByUrl).reduce(
 );
 
 if (errorCount.total === 0) {
-  console.log(` ${emoji.get(':cocktail:')} No errors found. Life is easy!`);
+  console.log(` ${emoji.get(':cocktail:')} No errors found. Life is easy!\n`);
   process.exit(0);
 }
 
@@ -124,8 +124,8 @@ async function fixErrors(errorsByPath) {
       frontmatterText = matches[0];
     } else {
       console.error(
-        `${emoji.get(':scream:')} ` +
-          c.red(`OMG, I'm unable to parse the frontmatter for this page!`)
+        ` ${emoji.get(':scream:')} ` +
+          c.red(` OMG, I'm unable to parse the frontmatter for this page!\n`)
       );
       process.exit(1);
     }
