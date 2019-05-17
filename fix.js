@@ -111,9 +111,7 @@ async function fixErrors(errorsByPath) {
       'index.md'
     );
     const fileBlob = fs.readFileSync(filePath);
-    console.log(
-      `> ${emoji.get(':page_facing_up:')} ${c.whiteBright(url)}...\n`
-    );
+    console.log(` ${emoji.get(':page_facing_up:')} ${c.whiteBright(url)}...\n`);
     const fileContents = fileBlob.toString();
     const matches = fileContents.match(frontmatterRE);
     let frontmatterText;
@@ -151,7 +149,7 @@ async function fixErrors(errorsByPath) {
     }
   }
   console.log(
-    `\n${emoji.get(':raised_hands:')} ${c.bold.whiteBright(' All done!')}\n`
+    `\n ${emoji.get(':raised_hands:')} ${c.bold.whiteBright(' All done!')}\n`
   );
 }
 

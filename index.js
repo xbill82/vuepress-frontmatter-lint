@@ -101,7 +101,11 @@ module.exports = (options, ctx) => {
       if (Object.keys(errorsByPath).length) {
         generateConsoleReport(errorsByPath);
         if (options.dumpToFile) {
-          dumpErrorsToFile(errorsByPath, options.dumpFile || dumpFile);
+          dumpErrorsToFile(
+            errorsByPath,
+            options.dumpFile || dumpFile,
+            ctx.sourceDir
+          );
         }
         errorsByPath = {};
         if (options.abortBuild) {
@@ -129,7 +133,7 @@ module.exports = (options, ctx) => {
   };
 };
 
-function dumpErrorsToFile(errors, fileName) {
+function dumpErrorsToFile(errors, fileName, sourceDir) {
   writeFileSync(fileName, JSON.stringify(errors, null, 4));
   console.log(`Frontmatter errors have been dumped to ${c.yellow(fileName)}\n`);
   console.log(
@@ -138,7 +142,9 @@ function dumpErrorsToFile(errors, fileName) {
     )
   );
   console.log(
-    c.bold.whiteBright(`  $(npm bin)/frontmatter-fix -e ${fileName}`)
+    c.bold.whiteBright(
+      `  $(npm bin)/frontmatter-fix -e ${fileName} -s ${sourceDir}`
+    )
   );
 }
 
