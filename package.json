@@ -1,5 +1,5 @@
 {
-  "name": "vuepress-validate-frontmatter",
+  "name": "vuepress-frontmatter-lint",
   "version": "2.0.10",
   "description": "Validate page frontmatters in the VueJS props validation fashion",
   "main": "index.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xbill82/vuepress-validate-frontmatter"
+    "url": "https://github.com/xbill82/vuepress-frontmatter-lint"
   },
   "author": "Luca Marchesini <xbill82@gmail.com>",
   "license": "ISC",

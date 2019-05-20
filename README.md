@@ -1,11 +1,11 @@
-# Frontmatter Validator for VuePress
+# Frontmatter linter for VuePress
 
 Validate frontmatters like VueJS props.
 
 ## Getting started
 
 ```sh
-npm i vuepress-validate-frontmatter
+npm i vuepress-frontmatter-lint
 ```
 
 In `.vuepress/config.js`, add
@@ -15,7 +15,7 @@ module.exports = {
   // ...
   plugins: [
     [
-      require('vuepress-validate-frontmatter'),
+      require('vuepress-frontmatter-lint'),
       {
         specs: {
           fieldName: {
