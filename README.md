@@ -1,6 +1,8 @@
-# Frontmatter linter for VuePress
+# Frontmatter Linter for VuePress
 
-Validate frontmatters like VueJS props.
+Lint frontmatters like VueJS props.
+
+![Lint frontmatters like VueJS props](frontmatter-lint-demo.gif)
 
 ## Getting started
 
