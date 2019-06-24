@@ -1,6 +1,6 @@
 {
   "name": "vuepress-frontmatter-lint",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Validate page frontmatters in the VueJS props validation fashion",
   "main": "index.js",
   "scripts": {

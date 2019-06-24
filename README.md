@@ -65,6 +65,10 @@ The name of the file where the errors should be dumped to. Ignored if `dumpToFil
 
 Abort the build if there are linting errors.
 
+### `exclude`
+
+An array of excluded file paths. Parsed by [micromatch](https://www.npmjs.com/package/micromatch)
+
 ### `postProcessErrors` (`[Function]`, optional)
 
 An optional function that allows you to post-process the list of errors. This is useful to add `fix` fields to individual errors (`fix` fields are used by the automatic fix tool).
