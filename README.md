@@ -67,7 +67,7 @@ Abort the build if there are linting errors.
 
 ### `exclude`
 
-An array of excluded file paths. Parsed by [micromatch](https://www.npmjs.com/package/micromatch)
+An array of excluded file paths. Parsed by [micromatch](https://www.npmjs.com/package/micromatch) and matched against [`$page.regularPath`](https://v1.vuepress.vuejs.org/plugin/option-api.html#extendpagedata).
 
 ### `postProcessErrors` (`[Function]`, optional)
 
