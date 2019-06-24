@@ -1,8 +1,9 @@
 const { writeFileSync } = require('fs');
 const { pickBy } = require('lodash');
+const mm = require('micromatch');
 const c = require('chalk');
 
-const pluginName = 'validate-frontmatter';
+const pluginName = 'frontmatter-lint';
 const dumpFile = './frontmatter-errors.json';
 
 module.exports = (options, ctx) => {
@@ -24,6 +25,8 @@ module.exports = (options, ctx) => {
     return { name: pluginName };
   }
 
+  const exclude = options.exclude || [];
+
   return {
     name: pluginName,
     extendPageData($page) {
@@ -31,6 +34,12 @@ module.exports = (options, ctx) => {
         regularPath, // file's absolute path
         frontmatter // page's frontmatter object
       } = $page;
+
+      const matchesExclude = mm([regularPath], exclude);
+
+      if (matchesExclude.length) {
+        return;
+      }
 
       const requiredFields = pickBy(specs, s => s.required === true);
       Object.keys(requiredFields).forEach(fieldName => {
