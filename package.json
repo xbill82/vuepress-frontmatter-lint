@@ -1,7 +1,7 @@
 {
-  "name": "vuepress-frontmatter-lint",
-  "version": "2.1.1",
-  "description": "Validate page frontmatters in the VueJS props validation fashion",
+  "name": "vuepress-validate-frontmatter",
+  "version": "3.0.0",
+  "description": "Deprecated -> vuepress-frontmatter-lint",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,10 +14,6 @@
   ],
   "bin": {
     "frontmatter-fix": "./fix.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/xbill82/vuepress-frontmatter-lint"
   },
   "author": "Luca Marchesini <xbill82@gmail.com>",
   "license": "ISC",
